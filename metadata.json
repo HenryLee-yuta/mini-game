@@ -2,5 +2,7 @@
   "name": "Maison Meringue · 法式蛋糕疊疊樂",
   "description": "溫暖法式甜點屋風格的 2D 蛋糕疊疊樂手機遊戲，透過上方擺鐘精準落下並堆疊多層法式蛋糕，支援裁切物理、完美連擊加寬與合成音效。",
   "requestFramePermissions": [],
-  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
 }
