@@ -181,7 +181,7 @@ export class CakeStackEngine {
     const ropeLength = this.getRopeLength();
     this.swinging = {
       phase: 0,
-      speed: 1.65,
+      speed: 0.825,
       maxAngle: this.getMaxAngle(ropeLength) * 0.65,
       angle: 0,
       pivotX: LOGICAL_WIDTH / 2,
@@ -246,8 +246,8 @@ export class CakeStackEngine {
   private spawnNextSwingingCake(width: number, layerIndex: number): void {
     const ropeLength = this.getRopeLength();
     const maxAngle = this.getMaxAngle(ropeLength);
-    // Smooth asymptotic swing speed progression
-    const speed = 2.05 + 1.85 * (1 - Math.exp(-layerIndex / 22));
+    // Smooth asymptotic swing speed progression (relaxed 0.5x pace)
+    const speed = 1.025 + 0.925 * (1 - Math.exp(-layerIndex / 22));
     // Alternate starting side each layer for dynamic rhythm
     const startPhase = layerIndex % 2 === 0 ? -Math.PI * 0.38 : Math.PI * 0.38;
 

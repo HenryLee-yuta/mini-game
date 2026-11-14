@@ -43,6 +43,7 @@ export default function App() {
   statsRef.current = stats;
 
   const handleGameOver = useCallback((finalSnap: GameSnapshot) => {
+    patisserieAudio.setMusicDucked(true);
     setStats((prev) => {
       const updated: PersistentStats = {
         ...prev,
@@ -71,6 +72,7 @@ export default function App() {
     engineRef.current = engine;
 
     return () => {
+      patisserieAudio.stopMusic();
       engine.destroy();
       engineRef.current = null;
     };
@@ -79,6 +81,8 @@ export default function App() {
   const handleStartGame = useCallback(() => {
     patisserieAudio.unlock();
     patisserieAudio.playUiTap();
+    patisserieAudio.setMusicDucked(false);
+    patisserieAudio.startMusic();
     engineRef.current?.startNewGame();
   }, []);
 
@@ -89,6 +93,7 @@ export default function App() {
       patisserieAudio.setMuted(nextMuted);
       if (!nextMuted) {
         patisserieAudio.playUiTap();
+        patisserieAudio.startMusic();
       }
       const updated = { ...prev, isMuted: nextMuted };
       savePersistentStats(updated);
@@ -98,25 +103,36 @@ export default function App() {
 
   const handlePause = useCallback(() => {
     patisserieAudio.playUiTap();
+    patisserieAudio.setMusicPaused(true);
     engineRef.current?.setPaused(true);
   }, []);
 
   const handleResume = useCallback(() => {
     patisserieAudio.unlock();
     patisserieAudio.playUiTap();
+    patisserieAudio.setMusicPaused(false);
     engineRef.current?.setPaused(false);
   }, []);
 
   const handleReturnTitle = useCallback(() => {
     patisserieAudio.playUiTap();
+    patisserieAudio.setMusicPaused(false);
+    patisserieAudio.setMusicDucked(true);
     engineRef.current?.returnToTitle();
   }, []);
 
   const handlePlayfieldPointerDown = useCallback(() => {
     const engine = engineRef.current;
     if (!engine) return;
+    patisserieAudio.unlock();
+    if (engine.getGameState() === 'TITLE_MENU') {
+      patisserieAudio.setMusicDucked(true);
+      patisserieAudio.startMusic();
+      return;
+    }
     if (engine.getGameState() === 'PLAYING') {
-      patisserieAudio.unlock();
+      patisserieAudio.setMusicDucked(false);
+      patisserieAudio.startMusic();
       engine.dropCake();
     }
   }, []);
@@ -155,15 +171,29 @@ export default function App() {
     const onWindowBlur = () => {
       const engine = engineRef.current;
       if (engine && engine.getGameState() === 'PLAYING') {
+        patisserieAudio.setMusicPaused(true);
         engine.setPaused(true);
+      }
+    };
+
+    const onVisibilityChange = () => {
+      if (document.hidden) {
+        patisserieAudio.setMusicPaused(true);
+      } else {
+        const engine = engineRef.current;
+        if (engine && engine.getGameState() !== 'PAUSED') {
+          patisserieAudio.setMusicPaused(false);
+        }
       }
     };
 
     window.addEventListener('keydown', onKeyDown);
     window.addEventListener('blur', onWindowBlur);
+    document.addEventListener('visibilitychange', onVisibilityChange);
     return () => {
       window.removeEventListener('keydown', onKeyDown);
       window.removeEventListener('blur', onWindowBlur);
+      document.removeEventListener('visibilitychange', onVisibilityChange);
     };
   }, [handlePause, handleResume, handleStartGame]);
 
