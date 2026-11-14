@@ -246,8 +246,8 @@ export class CakeStackEngine {
   private spawnNextSwingingCake(width: number, layerIndex: number): void {
     const ropeLength = this.getRopeLength();
     const maxAngle = this.getMaxAngle(ropeLength);
-    // Smooth asymptotic swing speed progression (relaxed 0.5x pace)
-    const speed = 1.025 + 0.925 * (1 - Math.exp(-layerIndex / 22));
+    // Constant relaxed swing speed regardless of stack height
+    const speed = 1.025;
     // Alternate starting side each layer for dynamic rhythm
     const startPhase = layerIndex % 2 === 0 ? -Math.PI * 0.38 : Math.PI * 0.38;
 
