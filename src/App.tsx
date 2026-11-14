@@ -4,6 +4,7 @@
  */
 
 import { useCallback, useEffect, useRef, useState } from 'react';
+import salonBackdropImg from './assets/images/patisserie_salon_backdrop_1794633812286.jpg';
 import { GameHud } from './components/GameHud';
 import { GameOverModal } from './components/GameOverModal';
 import { PauseModal } from './components/PauseModal';
@@ -171,7 +172,7 @@ export default function App() {
       {/* Desktop Ambient French Patisserie Salon Backdrop */}
       {!backdropFailed && (
         <img
-          src="/src/assets/images/patisserie_salon_backdrop_1794633812286.jpg"
+          src={salonBackdropImg}
           alt="法式甜點屋背景"
           referrerPolicy="no-referrer"
           onError={() => setBackdropFailed(true)}
